@@ -1,0 +1,176 @@
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>Formulario de Mantención</mat-card-title>
+      <mat-card-subtitle>Registro de actividades para líneas de cultivo de choritos</mat-card-subtitle>
+    </mat-card-header>
+  
+    <mat-card-content>
+      <form (ngSubmit)="guardar()">
+        <!-- Campos ocultos para el área y la fecha/hora -->
+        <input type="hidden" [(ngModel)]="area" name="area">
+        <input type="hidden" [(ngModel)]="fechaHora" name="fechaHora">
+  
+        <!-- Campo: Proceso -->
+        <mat-form-field appearance="fill">
+          <mat-label>Proceso</mat-label>
+          <mat-select [(ngModel)]="proceso" name="proceso" required>
+            <mat-option *ngFor="let proceso of procesosDisponibles" [value]="proceso">{{ proceso }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <!-- Campo: Centro -->
+        <mat-form-field appearance="fill">
+          <mat-label>Centro</mat-label>
+          <input matInput [(ngModel)]="centro" name="centro" required>
+        </mat-form-field>
+  
+        <!-- Campo: Línea -->
+        <mat-form-field appearance="fill">
+          <mat-label>Línea</mat-label>
+          <input matInput [(ngModel)]="linea" name="linea" required>
+        </mat-form-field>
+  
+        <!-- Campos específicos del proceso -->
+        <div *ngIf="proceso === 'Extraccion Boyas'">
+          <mat-form-field appearance="fill">
+            <mat-label>Cantidad de Boyas Extraídas</mat-label>
+            <input matInput type="number" [(ngModel)]="cantidadBoyasExtraidas" name="cantidadBoyasExtraidas">
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill">
+            <mat-label>Boyas Buenas</mat-label>
+            <input matInput type="number" [(ngModel)]="cantidadBoyasBuenas" name="cantidadBoyasBuenas">
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill">
+            <mat-label>Boyas Malas</mat-label>
+            <input matInput type="number" [(ngModel)]="cantidadBoyasMalas" name="cantidadBoyasMalas">
+          </mat-form-field>
+        </div>
+  
+        <div *ngIf="proceso === 'Reflote'">
+          <mat-form-field appearance="fill">
+            <mat-label>Cantidad de Boyas Instaladas</mat-label>
+            <input matInput type="number" [(ngModel)]="cantidadBoyasInstaladas" name="cantidadBoyasInstaladas">
+          </mat-form-field>
+        </div>
+  
+        <div *ngIf="proceso === 'Tensado' || proceso === 'Reposicion F' || proceso === 'Re-Instalacion F'">
+          <mat-checkbox [(ngModel)]="ladoA" name="ladoA">Lado A</mat-checkbox>
+          <mat-checkbox [(ngModel)]="ladoB" name="ladoB">Lado B</mat-checkbox>
+        </div>
+  
+        <div *ngIf="proceso === 'Limpieza Boyas'">
+          <mat-form-field appearance="fill">
+            <mat-label>Número de Boyas Limpias</mat-label>
+            <input matInput type="number" [(ngModel)]="numeroBoyasLimpias" name="numeroBoyasLimpias">
+          </mat-form-field>
+        </div>
+  
+        <div *ngIf="proceso === 'Limpieza Chicotes'">
+          <mat-form-field appearance="fill">
+            <mat-label>% de Línea Limpiada</mat-label>
+            <input matInput type="number" [(ngModel)]="porcentajeLimpiezaChicotes" name="porcentajeLimpiezaChicotes">
+          </mat-form-field>
+        </div>
+  
+        <div *ngIf="proceso === 'Colcha Linea'">
+          <mat-form-field appearance="fill">
+            <mat-label>Número de Colchas</mat-label>
+            <input matInput type="number" [(ngModel)]="numeroColchas" name="numeroColchas">
+          </mat-form-field>
+        </div>
+  
+        <mat-form-field appearance="fill">
+          <mat-label>Observaciones</mat-label>
+          <textarea matInput [(ngModel)]="observaciones" name="observaciones"></textarea>
+        </mat-form-field>
+  
+        <!-- Botón para agregar datos -->
+        <button mat-raised-button color="primary" type="button" (click)="agregarDatos()">
+          <mat-icon>add</mat-icon> Agregar Datos
+        </button>
+  
+        <!-- Tabla para mostrar los datos ingresados -->
+        <mat-table [dataSource]="datosTabla" class="mat-elevation-z8">
+          <ng-container matColumnDef="centro">
+            <mat-header-cell *matHeaderCellDef>Centro</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.centro }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="linea">
+            <mat-header-cell *matHeaderCellDef>Línea</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.linea }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="cantidadBoyasExtraidas">
+            <mat-header-cell *matHeaderCellDef>Boyas Extraídas</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.cantidadBoyasExtraidas }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="cantidadBoyasBuenas">
+            <mat-header-cell *matHeaderCellDef>Boyas Buenas</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.cantidadBoyasBuenas }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="cantidadBoyasMalas">
+            <mat-header-cell *matHeaderCellDef>Boyas Malas</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.cantidadBoyasMalas }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="cantidadBoyasInstaladas">
+            <mat-header-cell *matHeaderCellDef>Boyas Instaladas</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.cantidadBoyasInstaladas }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="ladoA">
+            <mat-header-cell *matHeaderCellDef>Lado A</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.ladoA ? 'Sí' : 'No' }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="ladoB">
+            <mat-header-cell *matHeaderCellDef>Lado B</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.ladoB ? 'Sí' : 'No' }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="numeroBoyasLimpias">
+            <mat-header-cell *matHeaderCellDef>Boyas Limpias</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.numeroBoyasLimpias }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="porcentajeLimpiezaChicotes">
+            <mat-header-cell *matHeaderCellDef>% Limpieza Chicotes</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.porcentajeLimpiezaChicotes }}%</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="numeroColchas">
+            <mat-header-cell *matHeaderCellDef>Colchas</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.numeroColchas }}</mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="observaciones">
+            <mat-header-cell *matHeaderCellDef>Observaciones</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.observaciones }}</mat-cell>
+          </ng-container>
+  
+          <!-- Columna de acciones (eliminar) -->
+          <ng-container matColumnDef="acciones">
+            <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index">
+              <button mat-icon-button color="warn" (click)="eliminarDatos(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+  
+          <mat-header-row *matHeaderRowDef="columnasTabla"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: columnasTabla;"></mat-row>
+        </mat-table>
+  
+        <!-- Botón para guardar los datos -->
+        <button mat-raised-button color="accent" type="submit">
+          Guardar
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
